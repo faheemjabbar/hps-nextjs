@@ -2,17 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
 import { z } from "zod"
-
-
-export const receptionistSchema = z.object({
-  fullName: z.string().min(2),
-  email: z.string().email(),
-  password: z.string().min(6),
-
-  phone: z.string().min(11).optional(),
-  shift: z.string().optional(), // Morning, Evening, Night
-  desk: z.string().optional(),  // OPD, Front Desk, etc.
-})
+import { receptionistSchema } from "@/lib/schemas"
 
 
 export async function POST(request: NextRequest) {
@@ -41,6 +31,18 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Check if employeeId already exists
+    const existingReceptionist = await prisma.receptionist.findUnique({
+      where: { employeeId: data.employeeId },
+    })
+
+    if (existingReceptionist) {
+      return NextResponse.json(
+        { error: "Employee ID already registered" },
+        { status: 400 }
+      )
+    }
+
     // Hash password
     const hashedPassword = await bcrypt.hash(data.password, 10)
 
@@ -52,6 +54,7 @@ export async function POST(request: NextRequest) {
         role: "RECEPTIONIST",
         receptionist: {
           create: {
+            employeeId: data.employeeId,
             fullName: data.fullName,
             email: data.email,
             phone: data.phone,

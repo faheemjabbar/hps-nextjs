@@ -3,23 +3,7 @@ import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
 import { z } from "zod"
 import { Gender, BloodGroup } from "@prisma/client"
-
-export const patientSchema = z.object({
-  fullName: z.string().min(2),
-  email: z.string().email(),
-  password: z.string().min(6),
-
-  phone: z.string().min(11).optional(),
-
-  dob: z.coerce.date().optional(), // accepts string → Date
-  gender: z.nativeEnum(Gender).optional(),
-  bloodGroup: z.nativeEnum(BloodGroup).optional(),
-
-  address: z.string().optional(),
-  emergencyContact: z.string().optional(),
-  emergencyPhone: z.string().optional(),
-  medicalHistory: z.string().optional(),
-})
+import { patientSchema } from "@/lib/schemas"
 
 
 

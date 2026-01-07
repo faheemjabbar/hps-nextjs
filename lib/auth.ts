@@ -14,7 +14,7 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null
 
-        const user = await prisma.user.findUnique({
+        let user = await prisma.user.findUnique({
           where: { email: credentials.email },
           include: {
             doctor: true,
@@ -22,6 +22,44 @@ export const authOptions: NextAuthOptions = {
             receptionist: true,
           },
         })
+
+        // If not found by email, try doctor registrationId
+        if (!user) {
+          const doctor = await prisma.doctor.findUnique({
+            where: { registrationId: credentials.email },
+            include: {
+              user: {
+                include: {
+                  doctor: true,
+                  patient: true,
+                  receptionist: true,
+                },
+              },
+            },
+          })
+          if (doctor) {
+            user = doctor.user
+          }
+        }
+
+        // If still not found, try receptionist employeeId
+        if (!user) {
+          const receptionist = await prisma.receptionist.findUnique({
+            where: { employeeId: credentials.email },
+            include: {
+              user: {
+                include: {
+                  doctor: true,
+                  patient: true,
+                  receptionist: true,
+                },
+              },
+            },
+          })
+          if (receptionist) {
+            user = receptionist.user
+          }
+        }
 
         if (!user) return null
 

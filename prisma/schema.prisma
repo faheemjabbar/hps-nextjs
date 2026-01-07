@@ -190,6 +190,7 @@ model Patient {
 model Receptionist {
   id        String   @id @default(cuid())
   userId    String   @unique
+  employeeId String  @unique  // Employee ID for receptionist
   fullName  String
   email     String   @unique
   phone     String?
@@ -201,6 +202,7 @@ model Receptionist {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([email])
+  @@index([employeeId])
 }
 
 // --------------------- APPOINTMENT MODEL ---------------------

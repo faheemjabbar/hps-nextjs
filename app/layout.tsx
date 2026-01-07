@@ -19,8 +19,8 @@ const prata = Prata({
 })
 
 export const metadata: Metadata = {
-  title: 'Revive - Volunteer & Disaster Relief Platform',
-  description: 'Connect volunteers with NGOs for disaster relief campaigns',
+  title: 'HPS - Hospital Management System',
+  description: 'Connect patients to the right healthcare',
 }
 
 export default function RootLayout({

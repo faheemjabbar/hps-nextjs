@@ -3,35 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { Gender } from "@prisma/client"
 import bcrypt from 'bcryptjs'
 import { z } from 'zod'
-
-
-const doctorSchema = z.object({
-  fullName: z.string().min(2),
-  registrationId: z.string().min(1),
-  email: z.string().email(),
-  password: z.string().min(6),
-
-  phone: z.string().min(11).optional(),
-  specialization: z.string(),
-  qualification: z.string().optional(),
-
-  experience: z.coerce
-    .number()
-    .int()
-    .min(0)
-    .max(50)
-    .optional(),
-
-  consultationFee: z.coerce
-    .number()
-    .int()
-    .min(0)
-    .optional(),
-
-  gender: z.nativeEnum(Gender).optional(),
-
-  isAvailable: z.boolean().optional(),
-})
+import { doctorSchema } from '@/lib/schemas'
 
 
 export async function POST(request: NextRequest) {
